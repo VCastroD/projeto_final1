@@ -1,0 +1,173 @@
+From e8d9e2e76c7f99fb11f5d2c8981d3d81c6a1e6cf Mon Sep 17 00:00:00 2001
+From: vcastro <vcastro.denis@gmail.com>
+Date: Sun, 27 Sep 2026 18:31:23 -0300
+Subject: [PATCH] Corrige D01, D06, D12, D13 e D15 (sem retreinar os modelos)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- D01: maquina_risco usa sempre a tabela congelada do treino; recalcular
+  com falha_72h do lote vazava o rótulo para a feature.
+- D06: prever_registro lê os valores pelo nome da feature e recusa
+  dicionários com chaves faltando ou desconhecidas.
+- D12: janelas de 6 h/24 h e delta de 24 h medidas em horas, não em linhas.
+- D13: construir trabalha por posição; índice repetido não duplica linhas.
+- D15: manifest regenerado sobre o conteúdo LF versionado e .gitattributes
+  fixando eol=lf para dados/ e artefatos/.
+
+D02, D03, D04 e D05 mudam as features com que os modelos foram treinados
+e exigem retreino; ficam fora deste patch.
+---
+ .gitattributes            |  5 ++++
+ artefatos/manifest.json   |  8 +++---
+ src/sentinela/features.py | 53 ++++++++++++++++++++++++---------------
+ src/sentinela/modelo.py   | 12 ++++++---
+ 4 files changed, 50 insertions(+), 28 deletions(-)
+ create mode 100644 .gitattributes
+
+diff --git a/.gitattributes b/.gitattributes
+new file mode 100644
+index 0000000..d863263
+--- /dev/null
++++ b/.gitattributes
+@@ -0,0 +1,5 @@
++# O manifest.json guarda o sha256 destes arquivos com fim de linha LF.
++# Sem isto, o Git para Windows (core.autocrlf=true) os converte para CRLF
++# no checkout e o hash passa a depender do sistema operacional (D15).
++dados/*.csv text eol=lf
++artefatos/*.json text eol=lf
+diff --git a/artefatos/manifest.json b/artefatos/manifest.json
+index dd9e5d6..ca5c1b2 100644
+--- a/artefatos/manifest.json
++++ b/artefatos/manifest.json
+@@ -2,11 +2,11 @@
+   "gerado_em": "2026-09-08T08:19:45",
+   "semente": 42,
+   "arquivos": {
+-    "dados/treino.csv": "c451a57533172af5146d06db3272591a21ff4e6af3030c266a593e88bfe6bf56",
+-    "dados/teste.csv": "73124899eff5e5b0c84ead552f7f73f5739b4723c7815a0dc57d7566797d5830",
+-    "dados/producao.csv": "96c55056c8b89c92348036157dbf6f7b77ed22ca86165a52c77b3400380bf56b",
++    "dados/treino.csv": "8686bdae41bb60e52ca7b4004252fb996506b1f4f3c5b331f25ba5b9899cd64d",
++    "dados/teste.csv": "acaed09d75a34446b0add22dd76aa6779120fca5440e342096ea225a25815d91",
++    "dados/producao.csv": "4fb7dae133420d8bc5dd46a180c0437dd035bac9b85141b4295f1664307034b1",
+     "artefatos/modelo_v1.json": "1f5fe29a5cbf75bad31c1bdf38c3f6eee8f68bb4c80b86a372ffd90f374ffd6e",
+     "artefatos/modelo_v2.json": "cac035ef1d0ab4a75a6e4d2d399fdef46271dde5d58d5d1e84b7686b3026e611",
+-    "artefatos/risco_maquina.json": "34c467594843bda41e7fd12c5ae62d3dacf417d94c9d2498ee9cf5e8af493655"
++    "artefatos/risco_maquina.json": "2927fca7e649d0b8e3dc3c467cc11ac9f3d2e1aced06e3f5e7f88457834b948c"
+   }
+ }
+\ No newline at end of file
+diff --git a/src/sentinela/features.py b/src/sentinela/features.py
+index f3fcede..3272002 100644
+--- a/src/sentinela/features.py
++++ b/src/sentinela/features.py
+@@ -48,12 +48,11 @@ def risco_congelado() -> dict[str, float]:
+ def _risco_por_maquina(df: pd.DataFrame) -> pd.Series:
+     """Risco histórico do motor, usado como atributo categórico numérico.
+ 
+-    Quando o lote já vem rotulado, recalculamos o risco no próprio lote para
+-    refletir o comportamento mais recente da planta; sem rótulo, caímos na
+-    tabela congelada.
++    Sempre a tabela congelada do treino. Recalcular com `falha_72h` do
++    próprio lote vazava o rótulo para a feature (D01). No treino as duas
++    coisas coincidem, então os modelos publicados não precisam ser
++    retreinados.
+     """
+-    if "falha_72h" in df.columns:
+-        return df.groupby("id_maquina")["falha_72h"].transform("mean").astype(float)
+     congelado = risco_congelado()
+     padrao = sum(congelado.values()) / len(congelado)
+     return df["id_maquina"].map(congelado).fillna(padrao).astype(float)
+@@ -69,32 +68,44 @@ def construir(df: pd.DataFrame) -> pd.DataFrame:
+     if faltando:
+         raise ValueError(f"colunas ausentes para construir features: {sorted(faltando)}")
+ 
+-    ordenado = df.sort_values(["id_maquina", "timestamp"])
++    # Trabalha sobre posições (0..n-1): um índice de entrada repetido
++    # duplicava linhas no `.loc[df.index]` final (D13).
++    trabalho = df.reset_index(drop=True)
++    ordenado = trabalho.sort_values(["id_maquina", "timestamp"], kind="mergesort")
+     por_maquina = ordenado.groupby("id_maquina", sort=False)
++    instantes = pd.to_datetime(ordenado["timestamp"])
++
++    # Janelas em HORAS, não em linhas: quando `limpar` descarta uma leitura
++    # (eixo parado), "6 h" continuava contando 6 linhas (D12). Com a grade
++    # horária completa o resultado é idêntico ao anterior.
++    def janela(serie: pd.Series, horas: int, agregacao: str):
++        no_tempo = pd.Series(serie.to_numpy(), index=pd.DatetimeIndex(instantes.loc[serie.index]))
++        return getattr(no_tempo.rolling(f"{horas}h", min_periods=1), agregacao)().to_numpy()
++
++    def delta(serie: pd.Series, horas: int):
++        indice = pd.DatetimeIndex(instantes.loc[serie.index])
++        no_tempo = pd.Series(serie.to_numpy(), index=indice)
++        no_tempo = no_tempo[~no_tempo.index.duplicated(keep="last")]
++        anterior = no_tempo.reindex(indice - pd.Timedelta(hours=horas)).to_numpy()
++        return serie.to_numpy() - anterior
+ 
+     saida = pd.DataFrame(index=ordenado.index)
+ 
+     temperatura = por_maquina["temperatura_c"]
++    # Janela centrada: lê 2 h do futuro (D02). Corrigir exige retreinar os
++    # modelos, que aprenderam com esta definição — fica fora deste patch.
+     saida["temp_media_6h"] = temperatura.transform(
+         lambda s: s.rolling(JANELA_CURTA, center=True, min_periods=1).mean()
+     )
+-    saida["temp_max_24h"] = temperatura.transform(
+-        lambda s: s.rolling(JANELA_LONGA, min_periods=1).max()
+-    )
+-    saida["delta_temp_24h"] = temperatura.transform(
+-        lambda s: s - s.shift(JANELA_LONGA)
+-    ).fillna(0.0)
++    saida["temp_max_24h"] = temperatura.transform(lambda s: janela(s, JANELA_LONGA, "max"))
++    saida["delta_temp_24h"] = temperatura.transform(lambda s: delta(s, JANELA_LONGA)).fillna(0.0)
+ 
+     vibracao = por_maquina["vibracao_rms"]
+-    saida["vib_media_6h"] = vibracao.transform(
+-        lambda s: s.rolling(JANELA_CURTA, min_periods=1).mean()
+-    )
+-    saida["vib_max_24h"] = vibracao.transform(
+-        lambda s: s.rolling(JANELA_LONGA, min_periods=1).max()
+-    )
++    saida["vib_media_6h"] = vibracao.transform(lambda s: janela(s, JANELA_CURTA, "mean"))
++    saida["vib_max_24h"] = vibracao.transform(lambda s: janela(s, JANELA_LONGA, "max"))
+ 
+     saida["corrente_media_6h"] = por_maquina["corrente_a"].transform(
+-        lambda s: s.rolling(JANELA_CURTA, min_periods=1).mean()
++        lambda s: janela(s, JANELA_CURTA, "mean")
+     )
+ 
+     saida["pressao"] = ordenado["pressao"].astype(float)
+@@ -107,4 +118,6 @@ def construir(df: pd.DataFrame) -> pd.DataFrame:
+     saida["operador_senior"] = (ordenado["id_operador"] == OPERADOR_SENIOR).astype(float)
+     saida["turno"] = ordenado["turno"].astype(float)
+ 
+-    return saida.loc[df.index, list(ORDEM_FEATURES)]
++    resultado = saida.loc[trabalho.index, list(ORDEM_FEATURES)]
++    resultado.index = df.index
++    return resultado
+diff --git a/src/sentinela/modelo.py b/src/sentinela/modelo.py
+index 7edf174..464e8af 100644
+--- a/src/sentinela/modelo.py
++++ b/src/sentinela/modelo.py
+@@ -94,13 +94,17 @@ class Modelo:
+         """Atalho para prever uma leitura só, a partir de um dicionário de features.
+ 
+         É o caminho usado pelo painel da sala de controle, que recebe um
+-        registro por vez.
++        registro por vez. Os valores são lidos PELO NOME da feature; a ordem
++        das chaves do dicionário não importa (D06).
+         """
+-        vetor = np.array([float(valor) for valor in registro.values()], dtype=np.float64)
+-        if vetor.size != len(self.ordem_features):
++        faltando = set(self.ordem_features) - set(registro)
++        sobrando = set(registro) - set(self.ordem_features)
++        if faltando or sobrando:
+             raise ValueError(
+-                f"esperadas {len(self.ordem_features)} features, recebidas {vetor.size}"
++                f"registro não bate com as features do modelo: "
++                f"faltando {sorted(faltando)}, desconhecidas {sorted(sobrando)}"
+             )
++        vetor = np.array([float(registro[nome]) for nome in self.ordem_features], dtype=np.float64)
+         return int(self.prever(vetor.reshape(1, -1), limiar=limiar)[0])
+ 
+ 
