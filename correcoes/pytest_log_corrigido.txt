@@ -1,4 +1,4 @@
-# Execução: 2026-09-27 18:34:03 -0300 | comando: SENTINELA_DIR=../sentinela-corrigido python -m pytest -v --tb=line
+# Execução: 2026-09-27 20:11:04 -0300 | comando: SENTINELA_DIR=../sentinela-corrigido python -m pytest -v --tb=line
 # Sistema sob teste: sentinela-nortemec @ c9020d7 + correcoes/0001-corrige-D01-D06-D12-D13-D15.patch
 
 ============================= test session starts =============================
@@ -46,7 +46,7 @@ tests/test_apoio.py::test_pr_auc_de_score_aleatorio_fica_perto_da_prevalencia PA
 tests/test_apoio.py::test_ece_de_modelo_calibrado_e_quase_zero_e_de_modelo_inflado_nao PASSED [ 18%]
 tests/test_apoio.py::test_mcnemar_simetrico_nao_rejeita_e_assimetrico_rejeita PASSED [ 18%]
 tests/test_apoio.py::test_mcnemar_bate_com_valor_tabelado PASSED         [ 19%]
-tests/test_apoio.py::test_bootstrap_por_grupo_cobre_a_media_verdadeira PASSED [ 20%]
+tests/test_apoio.py::test_bootstrap_por_blocos_cobre_a_media_verdadeira PASSED [ 20%]
 tests/test_apoio.py::test_ks_iguais_nao_rejeita_e_escala_diferente_rejeita PASSED [ 20%]
 tests/test_apoio.py::test_psi_zero_para_mesma_distribuicao PASSED        [ 21%]
 tests/test_apoio.py::test_varredura_de_limiar_conta_certo PASSED         [ 21%]
@@ -194,155 +194,149 @@ tests/test_preprocessamento.py::test_leitura_fisicamente_impossivel_e_barrada_ou
 ================================== FAILURES ===================================
 E   AssertionError: v1/ruido_uniforme_1C: 76 decisões (1.81%) mudaram
     assert np.float64(0.018095238095238095) <= 0.01
-     +  where np.float64(0.018095238095238095) = <built-in method mean of numpy.ndarray object at 0x000002832342BAB0>()
-     +    where <built-in method mean of numpy.ndarray object at 0x000002832342BAB0> = array([False, False, False, ..., False, False, False], shape=(4200,)).mean
+     +  where np.float64(0.018095238095238095) = <built-in method mean of numpy.ndarray object at 0x0000018180B16EB0>()
+     +    where <built-in method mean of numpy.ndarray object at 0x0000018180B16EB0> = array([False, False, False, ..., False, False, False], shape=(4200,)).mean
 C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:46: AssertionError: v1/ruido_uniforme_1C: 76 decisões (1.81%) mudaram
 E   AssertionError: v1/desvio_+0.5C: 123 decisões (2.93%) mudaram
     assert np.float64(0.029285714285714286) <= 0.01
-     +  where np.float64(0.029285714285714286) = <built-in method mean of numpy.ndarray object at 0x000002832342A070>()
-     +    where <built-in method mean of numpy.ndarray object at 0x000002832342A070> = array([False, False, False, ..., False, False, False], shape=(4200,)).mean
+     +  where np.float64(0.029285714285714286) = <built-in method mean of numpy.ndarray object at 0x0000018180B17150>()
+     +    where <built-in method mean of numpy.ndarray object at 0x0000018180B17150> = array([False, False, False, ..., False, False, False], shape=(4200,)).mean
 C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:46: AssertionError: v1/desvio_+0.5C: 123 decisões (2.93%) mudaram
 E   AssertionError: v1/desvio_-0.5C: 152 decisões (3.62%) mudaram
     assert np.float64(0.03619047619047619) <= 0.01
-     +  where np.float64(0.03619047619047619) = <built-in method mean of numpy.ndarray object at 0x00000283230EBBD0>()
-     +    where <built-in method mean of numpy.ndarray object at 0x00000283230EBBD0> = array([False, False, False, ..., False, False, False], shape=(4200,)).mean
+     +  where np.float64(0.03619047619047619) = <built-in method mean of numpy.ndarray object at 0x00000181807E6790>()
+     +    where <built-in method mean of numpy.ndarray object at 0x00000181807E6790> = array([False, False, False, ..., False, False, False], shape=(4200,)).mean
 C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:46: AssertionError: v1/desvio_-0.5C: 152 decisões (3.62%) mudaram
 E   AssertionError: v2/ruido_uniforme_1C: 104 decisões (2.48%) mudaram
     assert np.float64(0.024761904761904763) <= 0.01
-     +  where np.float64(0.024761904761904763) = <built-in method mean of numpy.ndarray object at 0x000002832342A850>()
-     +    where <built-in method mean of numpy.ndarray object at 0x000002832342A850> = array([False, False, False, ..., False, False, False], shape=(4200,)).mean
+     +  where np.float64(0.024761904761904763) = <built-in method mean of numpy.ndarray object at 0x0000018180B16BB0>()
+     +    where <built-in method mean of numpy.ndarray object at 0x0000018180B16BB0> = array([False, False, False, ..., False, False, False], shape=(4200,)).mean
 C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:46: AssertionError: v2/ruido_uniforme_1C: 104 decisões (2.48%) mudaram
 E   AssertionError: v2/desvio_+0.5C: 187 decisões (4.45%) mudaram
     assert np.float64(0.04452380952380952) <= 0.01
-     +  where np.float64(0.04452380952380952) = <built-in method mean of numpy.ndarray object at 0x00000283230EB6F0>()
-     +    where <built-in method mean of numpy.ndarray object at 0x00000283230EB6F0> = array([False, False, False, ...,  True, False, False], shape=(4200,)).mean
+     +  where np.float64(0.04452380952380952) = <built-in method mean of numpy.ndarray object at 0x00000181807E7030>()
+     +    where <built-in method mean of numpy.ndarray object at 0x00000181807E7030> = array([False, False, False, ...,  True, False, False], shape=(4200,)).mean
 C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:46: AssertionError: v2/desvio_+0.5C: 187 decisões (4.45%) mudaram
 E   AssertionError: v2/desvio_-0.5C: 167 decisões (3.98%) mudaram
     assert np.float64(0.03976190476190476) <= 0.01
-     +  where np.float64(0.03976190476190476) = <built-in method mean of numpy.ndarray object at 0x00000283008EFC90>()
-     +    where <built-in method mean of numpy.ndarray object at 0x00000283008EFC90> = array([False, False, False, ..., False, False, False], shape=(4200,)).mean
+     +  where np.float64(0.03976190476190476) = <built-in method mean of numpy.ndarray object at 0x00000181DDF5FC30>()
+     +    where <built-in method mean of numpy.ndarray object at 0x00000181DDF5FC30> = array([False, False, False, ..., False, False, False], shape=(4200,)).mean
 C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:46: AssertionError: v2/desvio_-0.5C: 167 decisões (3.98%) mudaram
 E   AssertionError: v1 top-5: vib_max_24h (0.189), temp_media_6h (0.162), temp_max_24h (0.132), operador_senior (0.094), corrente_media_6h (0.084)
-    assert not ({'corrente_media_6h', 'operador_senior', 'temp_max_24h', 'temp_media_6h', 'vib_max_24h'} & {'operador_senior', 'turno'})
-     +  where {'corrente_media_6h', 'operador_senior', 'temp_max_24h', 'temp_media_6h', 'vib_max_24h'} = set(['vib_max_24h', 'temp_media_6h', 'temp_max_24h', 'operador_senior', 'corrente_media_6h'])
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:84: AssertionError: v1 top-5: vib_max_24h (0.189), temp_media_6h (0.162), temp_max_24h (0.132), operador_senior (0.094), corrente_media_6h (0.084)
+    assert ('operador_senior' not in ['vib_max_24h', 'temp_media_6h', 'temp_max_24h', 'operador_senior', 'corrente_media_6h'])
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:85: AssertionError: v1 top-5: vib_max_24h (0.189), temp_media_6h (0.162), temp_max_24h (0.132), operador_senior (0.094), corrente_media_6h (0.084)
 E   AssertionError: v2 top-5: temp_media_6h (0.216), vib_max_24h (0.154), temp_max_24h (0.131), operador_senior (0.080), corrente_media_6h (0.066)
-    assert not ({'corrente_media_6h', 'operador_senior', 'temp_max_24h', 'temp_media_6h', 'vib_max_24h'} & {'operador_senior', 'turno'})
-     +  where {'corrente_media_6h', 'operador_senior', 'temp_max_24h', 'temp_media_6h', 'vib_max_24h'} = set(['temp_media_6h', 'vib_max_24h', 'temp_max_24h', 'operador_senior', 'corrente_media_6h'])
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:84: AssertionError: v2 top-5: temp_media_6h (0.216), vib_max_24h (0.154), temp_max_24h (0.131), operador_senior (0.080), corrente_media_6h (0.066)
+    assert ('operador_senior' not in ['temp_media_6h', 'vib_max_24h', 'temp_max_24h', 'operador_senior', 'corrente_media_6h'])
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:85: AssertionError: v2 top-5: temp_media_6h (0.216), vib_max_24h (0.154), temp_max_24h (0.131), operador_senior (0.080), corrente_media_6h (0.066)
 E   AssertionError: OP-07 presente em 23% das 24 h antes e 57% das 24 h depois
-    assert (0.5690440060698028 - 0.23055555555555557) <= 0.1
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:112: AssertionError: OP-07 presente em 23% das 24 h antes e 57% das 24 h depois
+    assert (np.float64(0.5690440060698028) - np.float64(0.23055555555555557)) <= 0.1
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:110: AssertionError: OP-07 presente em 23% das 24 h antes e 57% das 24 h depois
 E   AssertionError: v1/operador_OP07_trocado: 351 decisões (8.36%) mudaram
     assert np.int64(351) == 0
-     +  where np.int64(351) = <built-in method sum of numpy.ndarray object at 0x000002832342AC10>()
-     +    where <built-in method sum of numpy.ndarray object at 0x000002832342AC10> = array([False, False, False, ..., False, False, False], shape=(4200,)).sum
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:131: AssertionError: v1/operador_OP07_trocado: 351 decisões (8.36%) mudaram
+     +  where np.int64(351) = <built-in method sum of numpy.ndarray object at 0x0000018180B15E90>()
+     +    where <built-in method sum of numpy.ndarray object at 0x0000018180B15E90> = array([False, False, False, ..., False, False, False], shape=(4200,)).sum
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:130: AssertionError: v1/operador_OP07_trocado: 351 decisões (8.36%) mudaram
 E   AssertionError: v1/turno_trocado: 4 decisões (0.10%) mudaram
     assert np.int64(4) == 0
-     +  where np.int64(4) = <built-in method sum of numpy.ndarray object at 0x000002832342BED0>()
-     +    where <built-in method sum of numpy.ndarray object at 0x000002832342BED0> = array([False, False, False, ..., False, False, False], shape=(4200,)).sum
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:131: AssertionError: v1/turno_trocado: 4 decisões (0.10%) mudaram
+     +  where np.int64(4) = <built-in method sum of numpy.ndarray object at 0x0000018180B17E10>()
+     +    where <built-in method sum of numpy.ndarray object at 0x0000018180B17E10> = array([False, False, False, ..., False, False, False], shape=(4200,)).sum
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:130: AssertionError: v1/turno_trocado: 4 decisões (0.10%) mudaram
 E   AssertionError: v2/operador_OP07_trocado: 462 decisões (11.00%) mudaram
     assert np.int64(462) == 0
-     +  where np.int64(462) = <built-in method sum of numpy.ndarray object at 0x000002832342B270>()
-     +    where <built-in method sum of numpy.ndarray object at 0x000002832342B270> = array([False, False, False, ...,  True, False,  True], shape=(4200,)).sum
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:131: AssertionError: v2/operador_OP07_trocado: 462 decisões (11.00%) mudaram
+     +  where np.int64(462) = <built-in method sum of numpy.ndarray object at 0x0000018180B16E50>()
+     +    where <built-in method sum of numpy.ndarray object at 0x0000018180B16E50> = array([False, False, False, ...,  True, False,  True], shape=(4200,)).sum
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:130: AssertionError: v2/operador_OP07_trocado: 462 decisões (11.00%) mudaram
 E   AssertionError: v2/turno_trocado: 10 decisões (0.24%) mudaram
     assert np.int64(10) == 0
-     +  where np.int64(10) = <built-in method sum of numpy.ndarray object at 0x0000028323429950>()
-     +    where <built-in method sum of numpy.ndarray object at 0x0000028323429950> = array([False, False, False, ..., False, False, False], shape=(4200,)).sum
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:131: AssertionError: v2/turno_trocado: 10 decisões (0.24%) mudaram
+     +  where np.int64(10) = <built-in method sum of numpy.ndarray object at 0x0000018180B15B90>()
+     +    where <built-in method sum of numpy.ndarray object at 0x0000018180B15B90> = array([False, False, False, ..., False, False, False], shape=(4200,)).sum
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:130: AssertionError: v2/turno_trocado: 10 decisões (0.24%) mudaram
 E   AssertionError: v1: 41 decisões (0.98%) mudaram só pela unidade
     assert np.int64(41) == 0
      +  where np.int64(41) = sum()
      +    where sum = 0       False\n1       False\n2       False\n3       False\n4       False\n        ...  \n4195    False\n4196    False\n4197    False\n4198    False\n4199    False\nName: predicao, Length: 4200, dtype: bool.sum
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:147: AssertionError: v1: 41 decisões (0.98%) mudaram só pela unidade
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:148: AssertionError: v1: 41 decisões (0.98%) mudaram só pela unidade
 E   AssertionError: v2: 161 decisões (3.83%) mudaram só pela unidade
     assert np.int64(161) == 0
      +  where np.int64(161) = sum()
      +    where sum = 0       False\n1       False\n2       False\n3       False\n4       False\n        ...  \n4195    False\n4196    False\n4197    False\n4198    False\n4199    False\nName: predicao, Length: 4200, dtype: bool.sum
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:147: AssertionError: v2: 161 decisões (3.83%) mudaram só pela unidade
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:148: AssertionError: v2: 161 decisões (3.83%) mudaram só pela unidade
 E   AssertionError: v1: recall 0.94 -> 0.10 com o sensor morto
     assert np.float64(0.10229007633587786) >= (0.5 * np.float64(0.9374045801526718))
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:180: AssertionError: v1: recall 0.94 -> 0.10 com o sensor morto
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:181: AssertionError: v1: recall 0.94 -> 0.10 com o sensor morto
 E   AssertionError: v2: recall 0.70 -> 0.24 com o sensor morto
     assert np.float64(0.24427480916030533) >= (0.5 * np.float64(0.6977099236641221))
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:180: AssertionError: v2: recall 0.70 -> 0.24 com o sensor morto
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_adversarial.py:181: AssertionError: v2: recall 0.70 -> 0.24 com o sensor morto
 E   AssertionError: producao: sigma estimado = 3.25 °C
     assert 3.245004239749386 <= (1.25 * 1.0)
      +  where 1.0 = ficha.RUIDO_TEMPERATURA_C
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_contrato_dados.py:156: AssertionError: producao: sigma estimado = 3.25 °C
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_contrato_dados.py:141: AssertionError: producao: sigma estimado = 3.25 °C
 E   assert 0.08452380952380945 == 0.035 ± 0.002
       
       comparison failed
       Obtained: 0.08452380952380945
       Expected: 0.035 ± 0.002
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:83: assert 0.08452380952380945 == 0.035 ± 0.002
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:77: assert 0.08452380952380945 == 0.035 ± 0.002
 E   AssertionError: recall v2 - v1: IC95% [-0.346, -0.150]; entre as falhas reais, v1 pega e v2 perde 157, o contrário 0 (McNemar p=1.1e-47)
     assert -0.3456077321060627 >= -0.02
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:106: AssertionError: recall v2 - v1: IC95% [-0.346, -0.150]; entre as falhas reais, v1 pega e v2 perde 157, o contrário 0 (McNemar p=1.1e-47)
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:102: AssertionError: recall v2 - v1: IC95% [-0.346, -0.150]; entre as falhas reais, v1 pega e v2 perde 157, o contrário 0 (McNemar p=1.1e-47)
 E   AssertionError: custo/leitura v2 - v1 (FN=10, FP=1): IC95% [+0.072, +0.474]
-    assert 0.07233928571428574 <= 0
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:115: AssertionError: custo/leitura v2 - v1 (FN=10, FP=1): IC95% [+0.072, +0.474]
+    assert 0.07233928571428572 <= 0
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:111: AssertionError: custo/leitura v2 - v1 (FN=10, FP=1): IC95% [+0.072, +0.474]
 E   AssertionError: PR-AUC v2 - v1 em produção: IC95% [-0.066, +0.056]
-    assert -0.06612156642943418 > 0
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:122: AssertionError: PR-AUC v2 - v1 em produção: IC95% [-0.066, +0.056]
+    assert -0.06612156642943419 > 0
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:117: AssertionError: PR-AUC v2 - v1 em produção: IC95% [-0.066, +0.056]
 E   AssertionError: v2: custo 2413 em 0,5 (recall 0.70) contra 1378 em 0.15 (recall 0.94)
     assert 2413.0 <= (1.1 * 1378.0)
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:142: AssertionError: v2: custo 2413 em 0,5 (recall 0.70) contra 1378 em 0.15 (recall 0.94)
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:141: AssertionError: v2: custo 2413 em 0,5 (recall 0.70) contra 1378 em 0.15 (recall 0.94)
 E   AssertionError: v1: ECE=0.191; prob. média 0.347 x prevalência 0.156; pior faixa [0.4, 0.5): prevista 0.45, observada 0.02
     assert 0.19063174103968253 <= 0.1
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:168: AssertionError: v1: ECE=0.191; prob. média 0.347 x prevalência 0.156; pior faixa [0.4, 0.5): prevista 0.45, observada 0.02
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:172: AssertionError: v1: ECE=0.191; prob. média 0.347 x prevalência 0.156; pior faixa [0.4, 0.5): prevista 0.45, observada 0.02
 E   AssertionError: temperatura_c: KS D=0.259, p=2.1e-122
     assert 0.258682634730539 <= 0.1
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:201: AssertionError: temperatura_c: KS D=0.259, p=2.1e-122
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:213: AssertionError: temperatura_c: KS D=0.259, p=2.1e-122
 E   AssertionError: desvio-padrão x1.52; KS D=0.128, p=1.1e-48
     assert np.float64(1.5221206526227349) <= 1.2
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:212: AssertionError: desvio-padrão x1.52; KS D=0.128, p=1.1e-48
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_estatistico.py:225: AssertionError: desvio-padrão x1.52; KS D=0.128, p=1.1e-48
 E   AssertionError: temp_media_6h: 4193 linhas divergem, até 5.59
-    assert np.float64(5.593333333333334) < 1e-09
-     +  where np.float64(5.593333333333334) = max()
-     +    where max = 0       0.656667\n1       0.023333\n2       0.213333\n3       0.666667\n4       1.220000\n          ...   \n4195    0.103333\n4196    0.022500\n4197    0.404167\n4198    0.128333\n4199    0.076667\nLength: 4200, dtype: float64.max
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_features.py:97: AssertionError: temp_media_6h: 4193 linhas divergem, até 5.59
+    assert 4193 == 0
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_features.py:106: AssertionError: temp_media_6h: 4193 linhas divergem, até 5.59
 E   AssertionError: temp_media_6h: 50 linhas do passado mudaram quando só o futuro mudou (ex.: 2026-06-03 11:00:00)
     assert not np.True_
      +  where np.True_ = any()
      +    where any = 0       False\n1       False\n2       False\n3       False\n4       False\n        ...  \n1520     True\n1521     True\n1522     True\n1523     True\n1524     True\nName: temp_media_6h, Length: 1525, dtype: bool.any
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_features.py:126: AssertionError: temp_media_6h: 50 linhas do passado mudaram quando só o futuro mudou (ex.: 2026-06-03 11:00:00)
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_features.py:149: AssertionError: temp_media_6h: 50 linhas do passado mudaram quando só o futuro mudou (ex.: 2026-06-03 11:00:00)
 E   AssertionError: 50 de 1800 linhas mudam conforme o fim do lote
-    assert not np.True_
-     +  where np.True_ = <built-in method any of numpy.ndarray object at 0x0000028323236EB0>()
-     +    where <built-in method any of numpy.ndarray object at 0x0000028323236EB0> = array([False, False, False, ...,  True,  True,  True], shape=(1800,)).any
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_features.py:141: AssertionError: 50 de 1800 linhas mudam conforme o fim do lote
+    assert 50 == 0
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_features.py:164: AssertionError: 50 de 1800 linhas mudam conforme o fim do lote
 E   AssertionError: 408 leituras de vibração abaixo de 1.2 mm/s após limpar()
     assert 408 == 0
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:102: AssertionError: 408 leituras de vibração abaixo de 1.2 mm/s após limpar()
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:90: AssertionError: 408 leituras de vibração abaixo de 1.2 mm/s após limpar()
 E   AssertionError: 1344 linhas continuam em psi; só 68.0% da pressão está em 3,0-4,5 bar
     assert (1344 == 0)
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:113: AssertionError: 1344 linhas continuam em psi; só 68.0% da pressão está em 3,0-4,5 bar
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:99: AssertionError: 1344 linhas continuam em psi; só 68.0% da pressão está em 3,0-4,5 bar
 E   assert np.float64(3.9) == 56.56482 ± 0.001
       
       comparison failed
       Obtained: 3.9
       Expected: 56.56482 ± 0.001
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:128: assert np.float64(3.9) == 56.56482 ± 0.001
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:111: assert np.float64(3.9) == 56.56482 ± 0.001
 E   AssertionError: 4200 leituras com temperatura_c=-40.0 aceitas por limpar()
     assert 4200 == 0
      +  where 4200 = len(               timestamp id_maquina  ...  horas_operacao operador_cod\n0    2026-06-01 00:00:00        M01  ...         21192.0           11\n1    2026-06-01 00:00:00        M02  ...         14472.0            3\n2    2026-06-01 00:00:00        M03  ...         15672.0           12\n3    2026-06-01 00:00:00        M04  ...         20232.0            7\n4    2026-06-01 00:00:00        M05  ...         13512.0            3\n...                  ...        ...  ...             ...          ...\n4195 2026-06-07 23:00:00        M21  ...         18599.0            7\n4196 2026-06-07 23:00:00        M22  ...          7919.0           12\n4197 2026-06-07 23:00:00        M23  ...          8639.0            5\n4198 2026-06-07 23:00:00        M24  ...          7319.0            5\n4199 2026-06-07 23:00:00        M25  ...         16559.0            5\n\n[4200 rows x 13 columns])
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:146: AssertionError: 4200 leituras com temperatura_c=-40.0 aceitas por limpar()
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:130: AssertionError: 4200 leituras com temperatura_c=-40.0 aceitas por limpar()
 E   AssertionError: 4200 leituras com temperatura_c=250.0 aceitas por limpar()
     assert 4200 == 0
      +  where 4200 = len(               timestamp id_maquina  ...  horas_operacao operador_cod\n0    2026-06-01 00:00:00        M01  ...         21192.0           11\n1    2026-06-01 00:00:00        M02  ...         14472.0            3\n2    2026-06-01 00:00:00        M03  ...         15672.0           12\n3    2026-06-01 00:00:00        M04  ...         20232.0            7\n4    2026-06-01 00:00:00        M05  ...         13512.0            3\n...                  ...        ...  ...             ...          ...\n4195 2026-06-07 23:00:00        M21  ...         18599.0            7\n4196 2026-06-07 23:00:00        M22  ...          7919.0           12\n4197 2026-06-07 23:00:00        M23  ...          8639.0            5\n4198 2026-06-07 23:00:00        M24  ...          7319.0            5\n4199 2026-06-07 23:00:00        M25  ...         16559.0            5\n\n[4200 rows x 13 columns])
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:146: AssertionError: 4200 leituras com temperatura_c=250.0 aceitas por limpar()
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:130: AssertionError: 4200 leituras com temperatura_c=250.0 aceitas por limpar()
 E   AssertionError: 4200 leituras com rpm=300.0 aceitas por limpar()
     assert 4200 == 0
      +  where 4200 = len(               timestamp id_maquina  ...  horas_operacao operador_cod\n0    2026-06-01 00:00:00        M01  ...         21192.0           11\n1    2026-06-01 00:00:00        M02  ...         14472.0            3\n2    2026-06-01 00:00:00        M03  ...         15672.0           12\n3    2026-06-01 00:00:00        M04  ...         20232.0            7\n4    2026-06-01 00:00:00        M05  ...         13512.0            3\n...                  ...        ...  ...             ...          ...\n4195 2026-06-07 23:00:00        M21  ...         18599.0            7\n4196 2026-06-07 23:00:00        M22  ...          7919.0           12\n4197 2026-06-07 23:00:00        M23  ...          8639.0            5\n4198 2026-06-07 23:00:00        M24  ...          7319.0            5\n4199 2026-06-07 23:00:00        M25  ...         16559.0            5\n\n[4200 rows x 13 columns])
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:146: AssertionError: 4200 leituras com rpm=300.0 aceitas por limpar()
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:130: AssertionError: 4200 leituras com rpm=300.0 aceitas por limpar()
 E   AssertionError: 4200 leituras com corrente_a=0.5 aceitas por limpar()
     assert 4200 == 0
      +  where 4200 = len(               timestamp id_maquina  ...  horas_operacao operador_cod\n0    2026-06-01 00:00:00        M01  ...         21192.0           11\n1    2026-06-01 00:00:00        M02  ...         14472.0            3\n2    2026-06-01 00:00:00        M03  ...         15672.0           12\n3    2026-06-01 00:00:00        M04  ...         20232.0            7\n4    2026-06-01 00:00:00        M05  ...         13512.0            3\n...                  ...        ...  ...             ...          ...\n4195 2026-06-07 23:00:00        M21  ...         18599.0            7\n4196 2026-06-07 23:00:00        M22  ...          7919.0           12\n4197 2026-06-07 23:00:00        M23  ...          8639.0            5\n4198 2026-06-07 23:00:00        M24  ...          7319.0            5\n4199 2026-06-07 23:00:00        M25  ...         16559.0            5\n\n[4200 rows x 13 columns])
-C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:146: AssertionError: 4200 leituras com corrente_a=0.5 aceitas por limpar()
+C:\Users\Python\Downloads\Projeto_Final\projeto_final1\tests\test_preprocessamento.py:130: AssertionError: 4200 leituras com corrente_a=0.5 aceitas por limpar()
 ================ defeitos do Sentinela documentados por testes ================
 D01  nao reproduzido  0 teste(s) falhando, 5 passando
 D02  CONFIRMADO       3 teste(s) falhando, 0 passando
@@ -431,4 +425,4 @@ FAILED tests/test_preprocessamento.py::test_leitura_fisicamente_impossivel_e_bar
 FAILED tests/test_preprocessamento.py::test_leitura_fisicamente_impossivel_e_barrada_ou_sinalizada[temperatura_c-250.0]
 FAILED tests/test_preprocessamento.py::test_leitura_fisicamente_impossivel_e_barrada_ou_sinalizada[rpm-300.0]
 FAILED tests/test_preprocessamento.py::test_leitura_fisicamente_impossivel_e_barrada_ou_sinalizada[corrente_a-0.5]
-======================= 36 failed, 143 passed in 45.69s =======================
+======================= 36 failed, 143 passed in 18.79s =======================

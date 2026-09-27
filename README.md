@@ -1,19 +1,14 @@
-# Suíte de testes do Sentinela: Projeto Final, Trilha 1 (ML clássico)
+# Testes do Sentinela: Projeto Final, Trilha 1
 
-Testes automatizados para o [Sentinela](https://github.com/felipehp/sentinela-nortemec), sistema de manutenção preditiva que prevê se um motor elétrico vai falhar nas próximas 72 h.
+Suíte de testes para o [Sentinela](https://github.com/felipehp/sentinela-nortemec), sistema que prevê se um motor elétrico vai falhar nas próximas 72 horas.
 
-A suíte testa o sistema **de fora**. O pacote `sentinela` não foi copiado nem editado: ele entra como **submódulo git** fixado na versão publicada (`c9020d7`).
+O Sentinela não foi copiado nem alterado. Ele entra como submódulo git (pasta `sentinela-nortemec/`), fixado no commit publicado `c9020d7`.
 
-- **Relatório:** [`relatorio.md`](relatorio.md), com o que foi testado, por quê, e os 15 defeitos encontrados, cada um com teste, evidência, causa raiz e impacto.
-- **Log da execução:** [`evidencias/pytest_log.txt`](evidencias/pytest_log.txt).
-- **Linha de base numérica:** [`evidencias/linha_de_base.md`](evidencias/linha_de_base.md).
-- **Correções opcionais (patch separado):** [`correcoes/`](correcoes/).
-
----
+O relatório com os defeitos encontrados está em [relatorio.md](relatorio.md).
 
 ## Como rodar
 
-Precisa de Python 3.10+ e git.
+Precisa de Python 3.10 ou mais novo e do git.
 
 ```bash
 git clone --recurse-submodules https://github.com/VCastroD/projeto_final1.git
@@ -22,9 +17,9 @@ pip install -r requirements.txt
 python -m pytest
 ```
 
-Se o repositório já foi clonado sem `--recurse-submodules`, rode `git submodule update --init` antes.
+Se o repositório já foi clonado sem `--recurse-submodules`, rode antes `git submodule update --init`.
 
-No **Google Colab**:
+No Google Colab:
 
 ```python
 !git clone --recurse-submodules https://github.com/VCastroD/projeto_final1.git
@@ -33,80 +28,78 @@ No **Google Colab**:
 !python -m pytest
 ```
 
-Comandos úteis:
+Outros comandos:
 
 ```bash
-python -m pytest -m "not defeito"     # só o que o sistema faz certo (131 testes, todos passam)
-python -m pytest -m defeito           # só os testes que documentam defeitos (falham de propósito)
-python -m pytest tests/test_estatistico.py -v
-python scripts/linha_de_base.py       # regenera evidencias/linha_de_base.md
+python -m pytest -v                          # lista cada teste
+python -m pytest -m "not defeito"            # só o que o sistema faz certo (131 testes, todos passam)
+python -m pytest -m defeito                  # só os testes que documentam defeitos
+python -m pytest tests/test_estatistico.py   # um arquivo só
+python scripts/linha_de_base.py              # gera evidencias/linha_de_base.md
 ```
 
-Para rodar a suíte contra outra cópia do Sentinela (por exemplo, com o patch de `correcoes/`), defina `SENTINELA_DIR` apontando para a raiz dela. O cabeçalho do pytest mostra de onde o pacote foi importado.
+## Resultado esperado
 
-### O que esperar
+179 testes: 133 passam e 46 falham.
 
-**179 testes: 133 passam e 46 falham.** As falhas são intencionais. O guia define que *"defeito encontrado se documenta com um teste que falha"*, então cada teste vermelho tem o marcador `@pytest.mark.defeito("Dxx")`. O `conftest.py` imprime no fim da execução um resumo por defeito. Qualquer falha **sem** esse marcador seria um problema da suíte, e não há nenhuma.
+As falhas são de propósito. O enunciado pede que cada defeito seja documentado com um teste que falha, então esses testes estão marcados com `@pytest.mark.defeito("Dxx")`. No fim da execução, o pytest imprime a lista de defeitos confirmados.
 
----
-
-## Estrutura
+## Pastas
 
 ```
 projeto_final1/
-  README.md                 este arquivo
-  relatorio.md              relatório (achados, método, evidências)
-  requirements.txt          numpy, pandas, pytest
-  pytest.ini
-  conftest.py               localiza o Sentinela, fixtures, marcador `defeito` e resumo
+  README.md               este arquivo
+  relatorio.md            relatório: método, defeitos encontrados e evidências
+  requirements.txt        dependências (numpy, pandas, pytest)
+  pytest.ini              configuração do pytest
+  conftest.py             acha o Sentinela, cria o marcador `defeito` e as fixtures de dados
   apoio/
-    estatistica.py          PR-AUC, ECE, McNemar exato, bootstrap por blocos, KS, PSI (numpy)
-    ficha.py                ficha técnica dos sensores como dados (faixas, unidades, ruído)
-    sistema.py              de onde importar o `sentinela` (submódulo ou SENTINELA_DIR)
+    estatistica.py        PR-AUC, calibração, McNemar, bootstrap, KS, PSI
+    ficha.py              ficha técnica dos sensores (faixas, unidades, ruído)
+    sistema.py            decide de onde importar o Sentinela
   tests/
-    test_contrato_dados.py  Bloco A: dados/ contra a ficha técnica + integridade
-    test_preprocessamento.py  Bloco A: preprocessamento.limpar
-    test_features.py        Bloco A: features.construir (oráculo, causalidade, rótulo)
-    test_modelo.py          contrato do modelo e de prever_registro
-    test_pipeline.py        ponta a ponta e sentinela.avaliacao
-    test_estatistico.py     Bloco B: v1 x v2 com IC/McNemar, classe rara, limiar, calibração, drift
-    test_adversarial.py     Bloco C: ruído do sensor, contrafactuais, importância, casos-limite
-    test_apoio.py           testa os instrumentos estatísticos contra respostas conhecidas
-  scripts/linha_de_base.py  tabela de métricas usada no relatório
-  evidencias/               log do pytest e linha de base
-  correcoes/                patch opcional (D01, D06, D12, D13, D15) + log com o patch
-  sentinela-nortemec/       submódulo: sistema sob teste, intocado
+    test_contrato_dados.py    dados contra a ficha técnica
+    test_preprocessamento.py  preprocessamento.limpar
+    test_features.py          features.construir
+    test_modelo.py            modelo e prever_registro
+    test_pipeline.py          pipeline completo e sentinela.avaliacao
+    test_estatistico.py       v1 x v2, limiar, calibração, teste x produção
+    test_adversarial.py       ruído, contrafactuais, casos-limite
+    test_apoio.py             confere as contas de apoio/estatistica.py
+  scripts/
+    linha_de_base.py      gera a tabela de métricas usada no relatório
+  evidencias/
+    pytest_log.txt        log completo da execução
+    linha_de_base.md      métricas de v1 e v2 nos três conjuntos
+  correcoes/              patch opcional que corrige D01, D06, D12, D13 e D15
+  sentinela-nortemec/     o sistema testado (submódulo, sem alterações)
 ```
 
----
+## Defeitos encontrados
 
-## Principais achados
+| ID | Defeito |
+|---|---|
+| D01 | `maquina_risco` é calculado com o próprio rótulo do lote |
+| D02 | `temp_media_6h` usa leituras do futuro |
+| D03 | o operador OP-07 é escalado quando a falha já é conhecida, e o modelo usa isso |
+| D04 | pressão em psi não é convertida para bar |
+| D05 | vibração vazia vira 0,0 |
+| D06 | `prever_registro` ignora o nome das chaves |
+| D07 | a v2 perde recall em relação à v1 (0,94 → 0,70) |
+| D08 | as probabilidades da v1 não são calibradas |
+| D09 | limiar 0,5 é ruim para a v2 |
+| D10 | em produção o ruído do sensor de temperatura triplicou |
+| D11 | ruído menor que o do sensor muda decisões |
+| D12 | janelas de "6 h" contam linhas, não horas |
+| D13 | índice repetido duplica linhas |
+| D14 | leituras impossíveis são aceitas |
+| D15 | o manifest de integridade falha em Linux/Colab |
 
-| ID | Defeito | Severidade |
-|---|---|---|
-| D01 | `maquina_risco` é recalculado com o **rótulo** do lote: 18,9% das decisões da v1 mudam só por a coluna `falha_72h` estar presente | Crítica |
-| D02 | `temp_media_6h` usa janela **centrada** e lê 2 h do futuro | Crítica |
-| D03 | O OP-07 é escalado quando a falha **já é conhecida** (23% → 57% no início da janela de falha); trocar só o operador muda 8 a 11% das decisões | Crítica |
-| D07 | A v2 ganha acurácia mas perde recall (0,94 → 0,70; IC95% da diferença [−0,35; −0,15]); 157 falhas pegas pela v1 e perdidas pela v2, 0 no sentido inverso | Crítica |
-| D05 | Dropout de vibração vira 0,0 mm/s; com o sensor morto o recall cai para 0,10 | Alta |
-| D06 | `prever_registro` usa a ordem do dicionário e ignora os nomes: 38% das decisões mudam | Alta |
-| D10 | Ruído do sensor de temperatura triplicou em produção (σ 1,08 → 3,25 °C), com a mesma média | Alta |
-| D08 | v1 descalibrada (ECE 0,19; prevê 45% onde ocorre 2%) | Média |
-| D04 | Pressão em psi nunca é convertida para bar | Média |
-| D09 | Limiar 0,5 custa 75% acima do ótimo para a v2 | Média |
-| D11 | Perturbação menor que o ruído do sensor muda 1,8 a 4,5% das decisões | Média |
-| D14 | Leituras impossíveis (−40 °C, 300 rpm) viram decisão sem aviso | Média |
-| D15 | O manifest de integridade falha em Linux/Colab (sha256 gerado sobre CRLF) | Média |
-| D12 | Janelas "de 6 h" contam linhas, não horas | Baixa |
-| D13 | Índice repetido duplica linhas em `construir` | Baixa |
+Detalhes, números e causa de cada um estão no [relatório](relatorio.md).
 
-**Recomendação:** não promover a v2. O "+3,5 pp de acurácia" foi medido com o rótulo vazando (D01), e no caminho real de produção a v2 multiplica por 4,8 os motores que falham sem ordem preventiva.
+## Saída da execução
 
----
-
-## Execução da suíte (saída do pytest)
-
-Trecho final de [`evidencias/pytest_log.txt`](evidencias/pytest_log.txt) (27/09/2026, Python 3.11.9, pytest 9.1.1):
+Final de [evidencias/pytest_log.txt](evidencias/pytest_log.txt):
 
 ```
 ================ defeitos do Sentinela documentados por testes ================
@@ -171,7 +164,7 @@ D14  CONFIRMADO       4 teste(s) falhando, 0 passando
        - test_leitura_fisicamente_impossivel_e_barrada_ou_sinalizada[corrente_a-0.5]
 D15  CONFIRMADO       1 teste(s) falhando, 0 passando
        - test_manifest_bate_com_o_conteudo_versionado_no_git
-======================= 46 failed, 133 passed in 37.93s =======================
+======================= 46 failed, 133 passed in 15.75s =======================
 ```
 
-As duas execuções "passando" de D10 são os controles `[treino]` e `[teste]`: o ruído do sensor está dentro da ficha nesses conjuntos e só estoura na produção.
+As duas execuções que passam em D10 são o treino e o teste: o ruído do sensor só passa do limite na produção.

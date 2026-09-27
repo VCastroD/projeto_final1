@@ -1,11 +1,9 @@
-"""Ficha técnica dos sensores (README do Sentinela) transcrita como dados.
-
-É o contrato contra o qual a suíte valida `dados/` e a saída de
-`preprocessamento.limpar`.
-"""
-from __future__ import annotations
+"""Ficha técnica dos sensores (README do Sentinela)."""
+import numpy as np
+import pandas as pd
 
 PSI_POR_BAR = 14.5038
+RUIDO_TEMPERATURA_C = 1.0
 
 FAIXAS = {
     "temperatura_c": (45.0, 95.0),
@@ -16,23 +14,14 @@ FAIXAS = {
     "idade_equipamento_meses": (6, 180),
 }
 
-RUIDO_TEMPERATURA_C = 1.0
+OPERADORES = {"OP-01", "OP-02", "OP-03", "OP-04", "OP-05", "OP-06",
+              "OP-07", "OP-08", "OP-09", "OP-10", "OP-11", "OP-12"}
 
-OPERADORES = {f"OP-{i:02d}" for i in range(1, 13)}
-TURNOS = {1, 2, 3}
-UNIDADES_PRESSAO = {"bar", "psi"}
-
-# Uma leitura fora da faixa de operação não é necessariamente erro (um motor
-# prestes a falhar sai da faixa). O contrato de qualidade de dados exige que
-# pelo menos 99,9% das leituras estejam dentro dela — o `mostly` do Great
-# Expectations. Erro de unidade derruba essa taxa para ~68%.
+# fração mínima de leituras dentro da faixa de operação
 FRACAO_MINIMA_NA_FAIXA = 0.999
 
 
 def pressao_em_bar(pressao, unidade):
-    """Converte a coluna de pressão para bar conforme `unidade_pressao`."""
-    import numpy as np
-
-    unidade = np.asarray(unidade).astype(str)
     pressao = np.asarray(pressao, dtype=float)
-    return np.where(np.char.lower(np.char.strip(unidade)) == "psi", pressao / PSI_POR_BAR, pressao)
+    em_psi = (pd.Series(unidade).str.strip().str.lower() == "psi").to_numpy()
+    return np.where(em_psi, pressao / PSI_POR_BAR, pressao)

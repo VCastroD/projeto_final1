@@ -1,8 +1,9 @@
 # Linha de base do Sentinela
 
+
 ## 1. Métricas no limiar 0,5
 
-*acurácia (reportada)*: `pipeline.executar` sobre o lote **com** `falha_72h` (como a equipe mediu). Demais colunas: caminho de produção, features **sem** o rótulo.
+*acurácia (reportada)*: `pipeline.executar` sobre o lote **com** `falha_72h` (como a equipe mediu). Demais colunas: features calculadas **sem** o rótulo.
 
 | conjunto | versão | acurácia (reportada) | acurácia | precisão | recall | F1 | PR-AUC | ECE | FN | FP | custo (10·FN+FP) |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -15,7 +16,6 @@
 
 
 ## 2. Varredura de limiar (teste, custo = 10·FN + FP)
-
 
 **v1**
 
@@ -40,7 +40,6 @@
 | 0.85 | 0.673 | 0.405 | 129 | 390 | 4029 |
 | 0.90 | 0.648 | 0.244 | 87 | 495 | 5037 |
 | 0.95 | 0.833 | 0.046 | 6 | 625 | 6256 |
-
 
 **v2**
 
@@ -69,7 +68,6 @@
 
 ## 3. Calibração (teste)
 
-
 **v1** — ECE = 0.191; prob. média 0.347 x prevalência 0.156
 
 | faixa | n | prevista | observada |
@@ -84,7 +82,6 @@
 | [0.7, 0.8) | 332 | 0.757 | 0.346 |
 | [0.8, 0.9) | 367 | 0.841 | 0.523 |
 | [0.9, 1.0) | 247 | 0.930 | 0.648 |
-
 
 **v2** — ECE = 0.058; prob. média 0.214 x prevalência 0.156
 
