@@ -1,0 +1,3 @@
+[submodule "sentinela-nortemec"]
+	path = sentinela-nortemec
+	url = https://github.com/felipehp/sentinela-nortemec.git
